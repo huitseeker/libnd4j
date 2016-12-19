@@ -16,3 +16,4 @@ blasbuild
 testbuild
 .idea/
 libnd4jtests
+tmp/
