@@ -5,7 +5,7 @@ export CMAKE_COMMAND="cmake"
 if which cmake3 &> /dev/null; then
     export CMAKE_COMMAND="cmake3"
 fi
-export MAKE_COMMAND="make -j2"
+export MAKE_COMMAND="make -j4"
 echo eval $CMAKE_COMMAND
 
 # Use > 1 to consume two arguments per pass in the loop (e.g. each
