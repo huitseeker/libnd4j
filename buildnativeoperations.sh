@@ -5,7 +5,7 @@ export CMAKE_COMMAND="cmake"
 if which cmake3 &> /dev/null; then
     export CMAKE_COMMAND="cmake3"
 fi
-export MAKE_COMMAND="make"
+export MAKE_COMMAND="make -j2"
 echo eval $CMAKE_COMMAND
 
 # Use > 1 to consume two arguments per pass in the loop (e.g. each
@@ -287,5 +287,3 @@ mkbuilddir
 pwd
 eval $CMAKE_COMMAND  "$BLAS_ARG" "$ARCH_ARG" "$SHARED_LIBS_ARG"  "$BUILD_TYPE" "$PACKAGING_ARG" "$EXPERIMENTAL_ARG" "$CUDA_COMPUTE" -DDEV=FALSE -DMKL_MULTI_THREADED=TRUE ../..
 eval $MAKE_COMMAND && cd ../../..
-
-
