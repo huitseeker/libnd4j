@@ -1,3 +1,5 @@
+set( CMAKE_VERBOSE_MAKEFILE on)
+
 if(LINUX)
     link_directories(/usr/local/lib)
     link_directories(/usr/lib)
@@ -132,6 +134,6 @@ elseif(CPU_BLAS)
     endif()
 
     #install(TARGETS mySharedLib DESTINATION /some/full/path)
-    install(TARGETS nd4jcpu DESTINATION  $ENV{ND4J_HOME}/nd4j-native-parent/nd4j-native/src/main/resources)
+    install(TARGETS nd4jcpu DESTINATION  .)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/cpu)
 endif()
