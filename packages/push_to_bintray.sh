@@ -53,6 +53,15 @@ if [ -z "$PACKAGE_NAME" ] || [ -z "$PACKAGE_VERSION" ] || [ -z "$PACKAGE_RELEASE
   exit -1
 fi
 
+if [ $BINTRAY_REPO == "deb" ]; then
+    DEB_ARCH_ARG="X-Bintray-Debian-Architecture:$PACKAGE_ARCH"
+    DEB_COMPONENT_ARG="X-Bintray-Debian-Component:main"
+    DEB_DISTRIBUTION_ARG="X-Bintray-Debian-Distribution:$(lsb_release -sc)"
+    DEB_ARGS="-H $DEB_ARCH_ARG -H $DEB_COMPONENT_ARG -H $DEB_DISTRIBUTION_ARG"
+else
+    DEB_ARGS=""
+fi
+
 echo "PACKAGE_NAME=$PACKAGE_NAME, PACKAGE_VERSION=$PACKAGE_VERSION, PACKAGE_RELEASE=$PACKAGE_RELEASE, PACKAGE_ARCH=$PACKAGE_ARCH"
 echo "BINTRAY_USER=$BINTRAY_USER, BINTRAY_ACCOUNT=$BINTRAY_ACCOUNT, BINTRAY_REPO=$BINTRAY_REPO, PACKAGE_FILE=$PACKAGE_FILE, BASE_DESC=$BASE_DESC"
 
@@ -82,7 +91,7 @@ else
 fi
 
 echo "Uploading package to Bintray.."
-HTTP_CODE=`$CURL_CMD -T $PACKAGE_FILE -u$BINTRAY_USER:$BINTRAY_APIKEY -H "X-Bintray-Package:$PACKAGE_NAME" -H "X-Bintray-Version:$PACKAGE_VERSION-$PACKAGE_RELEASE" "https://api.bintray.com/content/$BINTRAY_ACCOUNT/$BINTRAY_REPO/$REPO_FILE_PATH;publish=1"`
+HTTP_CODE=`$CURL_CMD -T $PACKAGE_FILE -u$BINTRAY_USER:$BINTRAY_APIKEY -H "X-Bintray-Package:$PACKAGE_NAME" -H "X-Bintray-Version:$PACKAGE_VERSION-$PACKAGE_RELEASE" $DEB_ARGS "https://api.bintray.com/content/$BINTRAY_ACCOUNT/$BINTRAY_REPO/$REPO_FILE_PATH;publish=1"`
 
 if [ "$HTTP_CODE" != "201" ]; then
  echo "failed to upload package -> $HTTP_CODE"
