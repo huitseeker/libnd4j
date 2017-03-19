@@ -111,6 +111,8 @@ if(CUDA_BLAS)
         CUDA_ADD_LIBRARY(nd4jcuda SHARED cuda/NativeOps.cu)
         target_link_libraries(nd4jcuda ${CUDA_LIBRARIES})
         set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/cuda)
+
+        install(TARGETS nd4jcuda DESTINATION .)
     endif(CUDA_FOUND)
 elseif(CPU_BLAS)
     message("CPU BLAS")
