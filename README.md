@@ -152,3 +152,11 @@ make package
 cd blasbuild/cuda
 make package
 ```
+
+## Uploading package to Bintray
+
+The package upload script is in packaging. The upload command for an rpm is:
+
+``` bash
+./packages/push_rpm_to_bintray.sh myAPIUser myAPIKey myOrganisation rpm blasbuild/cpu/libnd4j-0.8.0.fc7.3.1611.x86_64.rpm https://github.com/deeplearning4
+```
