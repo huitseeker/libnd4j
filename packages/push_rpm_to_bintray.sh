@@ -21,6 +21,8 @@ BINTRAY_REPO=$4
 RPM_FILE=$5
 BASE_DESC=$6
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 CURL_SILENT_CMD="curl --write-out %{http_code} --location --silent --output /dev/null -u$BINTRAY_USER:$BINTRAY_APIKEY"
 CURL_VERBOSE_CMD="curl --write-out %{http_code} --location -u$BINTRAY_USER:$BINTRAY_APIKEY"
 
@@ -29,12 +31,21 @@ CURL_CMD=$CURL_SILENT_CMD
 
 BINTRAY_ACCOUNT=$BINTRAY_DESTINATION
 
-RPM_NAME=`rpm --queryformat "%{NAME}" -qp $RPM_FILE`
-RPM_VERSION=`rpm --queryformat "%{VERSION}" -qp $RPM_FILE`
-RPM_RELEASE=`rpm --queryformat "%{RELEASE}" -qp $RPM_FILE`
-RPM_ARCH=`rpm --queryformat "%{ARCH}" -qp $RPM_FILE`
-RPM_LICENSE=`rpm --queryformat "%{LICENSE}" -qp $RPM_FILE`
-RPM_DESCRIPTION=`rpm --queryformat "%{DESCRIPTION}" -qp $RPM_FILE`
+function grab() {
+    local REGEX="s/set\($1 \\\"([^\\\"]*)\\\"\)$/\1/p"
+    local RES=$(sed -nEe "$REGEX" $DIR/../CMakeLists.txt)
+    echo $RES
+}
+
+RPM_NAME=$(grab "CPACK_PACKAGE_NAME")
+RPM_DESCRIPTION=$(grab "CPACK_PACKAGE_DESCRIPTION_SUMMARY")
+RPM_LICENSE=$(grab "CPACK_RPM_PACKAGE_LICENSE")
+RPM_RELEASE=$(basename $(dirname $RPM_FILE))
+RPM_ARCH=$(uname -i)
+RPM_MAJOR_VERSION=$(grab "CPACK_PACKAGE_VERSION_MAJOR")
+RPM_MINOR_VERSION=$(grab "CPACK_PACKAGE_VERSION_MINOR")
+RPM_PATCH_VERSION=$(grab "CPACK_PACKAGE_VERSION_PATCH")
+RPM_VERSION="$RPM_MAJOR_VERSION.$RPM_MINOR_VERSION.$RPM_PATCH_VERSION"
 
 REPO_FILE_PATH=`basename $RPM_FILE`
 DESC_URL=$BASE_DESC/$RPM_NAME
@@ -47,8 +58,8 @@ fi
 echo "RPM_NAME=$RPM_NAME, RPM_VERSION=$RPM_VERSION, RPM_RELEASE=$RPM_RELEASE, RPM_ARCH=$RPM_ARCH"
 echo "BINTRAY_USER=$BINTRAY_USER, BINTRAY_DESTINATION=$BINTRAY_DESTINATION, BINTRAY_REPO=$BINTRAY_REPO, RPM_FILE=$RPM_FILE, BASE_DESC=$BASE_DESC"
 
-echo "Deleting package from Bintray.."
-HTTP_CODE=`$CURL_CMD -H "Content-Type: application/json" -X DELETE https://api.bintray.com/packages/$BINTRAY_ACCOUNT/$BINTRAY_REPO/$RPM_NAME`
+echo "Deleting version from Bintray.."
+HTTP_CODE=`$CURL_CMD -H "Content-Type: application/json" -X DELETE https://api.bintray.com/packages/$BINTRAY_ACCOUNT/$BINTRAY_REPO/$RPM_NAME/versions/$RPM_VERSION-$RPM_RELEASE`
 
 if [ "$HTTP_CODE" != "200" ]; then
  echo "can't delete package -> $HTTP_CODE"
@@ -66,10 +77,10 @@ fi
 HTTP_CODE=`$CURL_CMD -H "Content-Type: application/json" -X POST https://api.bintray.com/packages/$BINTRAY_ACCOUNT/$BINTRAY_REPO/ --data "$DATA_JSON"`
 
 if [ "$HTTP_CODE" != "201" ]; then
- echo "can't create package -> $HTTP_CODE"
- exit -1
+    echo "can't create package -> $HTTP_CODE"
+    echo "Assuming package already exists"
 else
- echo "Package created"
+    echo "Package created"
 fi
 
 echo "Uploading package to Bintray.."
