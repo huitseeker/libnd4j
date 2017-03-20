@@ -1,0 +1,17 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: huitseeker/dl4j-centos7-dev-env
+    tag: 'latest'
+
+inputs:
+- name: libnd4j
+
+outputs:
+- name: built-libnd4j
+
+run:
+  path: libnd4j/buildnativeoperations.sh
