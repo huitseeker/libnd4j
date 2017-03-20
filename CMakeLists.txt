@@ -66,11 +66,13 @@ if(DISTRIBUTION STREQUAL "Ubuntu")
   set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
   set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "cuda")
   # For Ubuntu <= 12, libatlas3gf-base, liblapack3gf
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "libatlas3-base liblapack3 libopenblas-dev libatlas-dev liblapack-dev gcc-5 g++-5")
+  # Build deps: libatlas3-base liblapack3 libopenblas-dev libatlas-dev liblapack-dev gcc-5 g++-5
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
   set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/deeplearning4j/libnd4j")
   set(CPACK_GENERATOR "DEB")
   set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}-${RELEASE}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE})
-  set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/postrm;" )
+  set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/packages/postinst;${CMAKE_CURRENT_SOURCE_DIR}/packages/postrm;" )
+  add_subdirectory(packages)
 
 elseif(DISTRIBUTION STREQUAL "CentOS")
 
@@ -85,12 +87,14 @@ elseif(DISTRIBUTION STREQUAL "CentOS")
   set(CPACK_RPM_PACKAGE_GROUP "Development/Tools")
   set(CPACK_RPM_PACKAGE_LICENSE "Apache-2.0")
   set(CPACK_RPM_PACKAGE_SUGGESTS "cuda")
-  set(CPACK_RPM_PACKAGE_REQUIRES "atlas blas lapack cmake3 devtoolset-4-gcc devtoolset-4-gcc-c++")
+  # Build deps: atlas blas lapack cmake3 devtoolset-4-gcc devtoolset-4-gcc-c++
+  set(CPACK_RPM_PACKAGE_REQUIRES "")
   set(CPACK_RPM_PACKAGE_URL "https://github.com/deeplearning4j/libnd4j")
   set(CPACK_GENERATOR "RPM")
   set(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.fc${RELEASE}.${CPACK_RPM_PACKAGE_ARCHITECTURE})
-  set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postinst")
-  set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/postrm")
+  set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packages/postinst")
+  set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/packages/postrm")
+  add_subdirectory(packages)
 
 endif()
 
