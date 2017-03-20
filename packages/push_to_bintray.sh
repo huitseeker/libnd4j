@@ -21,6 +21,7 @@ PACKAGE_FILE=$4
 BASE_DESC=$5
 FILE_EXTENSION=${PACKAGE_FILE##*.}
 BINTRAY_REPO="${FILE_EXTENSION,,}"
+XDEBUG=""
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
